@@ -1,0 +1,10 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<h1>Цены</h1>
+<div>
+    <h2>{{ plan.name }}</h2>
+    <p>Цена: {{ plan.price }}</p>
+    <p>Описание: {{ plan.description }}</p>
+</div>
+{% endblock %}

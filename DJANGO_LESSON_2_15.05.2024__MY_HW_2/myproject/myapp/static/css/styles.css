@@ -1,0 +1,45 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    min-height: 100vh; /* Устанавливает минимальную высоту, чтобы тело занимало всю видимую часть экрана */
+    background: linear-gradient(135deg, #4d00ff, #e600ff); /* Базовый градиент */
+    background-size: cover; /* Растягивает градиент на всю доступную область */
+    background-attachment: fixed; /* Фиксирует фон, чтобы он не прокручивался вместе со страницей */
+}
+
+.navbar {
+    background-color: #333;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Центрирует элементы навбара по вертикали */
+}
+
+.navbar-brand, .navbar-links a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: color 0.3s ease; /* Добавляет плавность изменения цвета при наведении */
+}
+
+.navbar-links a:hover, .navbar-brand:hover {
+    color: #ccc; /* Изменяет цвет при наведении для улучшения визуального взаимодействия */
+}
+
+.footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: column; /* Меняет направление навбара на вертикальное в мобильном режиме */
+    }
+}

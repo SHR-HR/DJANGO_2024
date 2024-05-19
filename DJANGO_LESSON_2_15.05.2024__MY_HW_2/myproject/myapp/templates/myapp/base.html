@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}MY_HOME_WORK_2_DJANGO_LESSON_2_15.05.2024{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="/" class="navbar-brand">Главная</a>
+            <div class="navbar-links">
+                <a href="/features">Функции</a>
+                <a href="/list/">Список</a> <!-- Ссылка на страницу со списком -->
+                <a href="/card/">Карточка</a> <!-- Ссылка на страницу с карточкой -->
+                <a href="/pricing">Цены</a>
+            </div>
+        </nav>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <footer class="footer">
+        © 2024 My Django App, All rights reserved.
+    </footer>
+
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<h1>Card Page</h1>
+{% for item in items %}
+<div>
+    <h2>{{ item.name }}</h2> <!-- Убедитесь, что item.name существует в данных API -->
+    <p>{{ item.email }}</p> <!-- Предполагая, что вы хотите отобразить email, убедитесь, что он есть в данных -->
+</div>
+{% endfor %}
+{% endblock %}
