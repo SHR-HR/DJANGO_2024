@@ -1,0 +1,166 @@
+Отчет по практической работе №38
+
+Курс: Web-разработка
+
+Дисциплина: 
+Создание web-приложений с использованием фреймворка Django
+
+Тема: 
+Модуль 20. Обработка выгруженных файлов
+
+
+Цель работы:
+
+Подключить и настроить библиотеку для автоматического удаления ненужных файлов.
+
+Проверить её работоспособность.
+
+
+Шаги выполнения работы
+
+
+1. Настройка проекта
+
+Я работал с существующим проектом на Django, который включает в себя три приложения:
+
+amenities – для работы с удобствами (услугами отеля).
+rooms – для работы с номерами.
+supermarket – для работы с товарами супермаркета.
+
+Прежде чем начать, я убедился, что в проекте корректно настроена база данных и структура файлов.
+
+
+2. Установка и настройка библиотеки для автоматического удаления файлов
+
+Для выполнения задания я решил использовать библиотеку django-cleanup, которая автоматизирует процесс удаления ненужных файлов (например, изображений и документов), когда записи в базе данных обновляются или удаляются.
+
+Шаги установки:
+
+Установил библиотеку командой:
+
+
+pip install django-cleanup
+
+Добавил django_cleanup.apps.CleanupConfig в список установленных приложений в settings.py.
+
+INSTALLED_APPS = [
+    ...,
+    'django_cleanup.apps.CleanupConfig',  # Для автоматического удаления файлов
+]
+
+
+3. Настройка моделей
+
+Для каждого приложения я добавил поля для изображений и документов, которые могли бы загружаться на сервер и затем удаляться.
+
+Пример кода модели для удобств (amenities/models.py):
+
+class Amenity(models.Model):
+    name = models.CharField(max_length=50, verbose_name="Название удобства")
+    description = models.TextField(verbose_name="Описание")
+    image = models.ImageField(upload_to='amenities/', blank=True, null=True, verbose_name="Изображение")
+    file = models.FileField(upload_to='amenities/files/', blank=True, null=True, verbose_name="Документ (xlsx/pdf)")
+
+Аналогичные поля для изображений и файлов были добавлены в модели для приложений rooms и supermarket.
+
+
+4. Настройка views для обработки файлов
+
+Далее, в каждом из приложений я реализовал методы для загрузки и удаления файлов. 
+Это позволило выполнять загрузку новых изображений или документов и удалять существующие файлы через форму.
+
+Пример кода для удаления файлов (amenities/views.py):
+
+def amenity_detail(request, pk):
+    amenity = get_object_or_404(Amenity, pk=pk)
+    
+    if request.method == 'POST':
+        if 'image' in request.FILES:
+            amenity.image = request.FILES.get('image')
+            amenity.save()
+        elif 'delete_image' in request.POST:
+            amenity.image.delete()
+            amenity.image = None
+            amenity.save()
+        elif 'file' in request.FILES:
+            amenity.file = request.FILES.get('file')
+            amenity.save()
+        elif 'delete_file' in request.POST:
+            amenity.file.delete()
+            amenity.file = None
+            amenity.save()
+        return redirect('amenity_detail', pk=pk)
+
+    return render(request, 'amenity_detail.html', {'amenity': amenity})
+
+Этот код обрабатывает запросы на загрузку изображений и файлов, а также их удаление.
+
+
+5. Настройка URL маршрутов
+
+Для каждого приложения я добавил соответствующие URL-маршруты, 
+чтобы можно было работать с файлами через интерфейс пользователя.
+
+Пример для приложения amenities (amenities/urls.py):
+
+urlpatterns = [
+    path('<int:pk>/', views.amenity_detail, name='amenity_detail'),
+    path('<int:pk>/upload/', views.upload_image, name='upload_image'),
+    path('<int:pk>/delete/', views.delete_image, name='delete_image'),
+    path('<int:pk>/upload_file/', views.amenity_detail, name='upload_file'),
+    path('<int:pk>/delete_file/', views.amenity_detail, name='delete_file'),
+]
+
+Аналогичные изменения были внесены и для приложений rooms и supermarket.
+
+
+6. Настройка шаблонов (templates)
+
+Я также реализовал формы для загрузки и удаления файлов в шаблонах. 
+Это позволило пользователю загружать новые файлы через интерфейс и удалять существующие изображения или документы.
+
+
+Пример шаблона для удобства (amenities/templates/amenity_detail.html):
+
+<form method="post" enctype="multipart/form-data" action="{% url 'upload_image' amenity.pk %}">
+    {% csrf_token %}
+    <input type="file" name="image" class="form-control mt-3">
+    <button type="submit" class="btn btn-primary mt-3">Загрузить изображение</button>
+</form>
+
+<form method="post" enctype="multipart/form-data" action="{% url 'upload_file' amenity.pk %}">
+    {% csrf_token %}
+    <input type="file" name="file" accept=".xlsx,.pdf" class="form-control mt-3">
+    <button type="submit" class="btn btn-primary mt-3">Загрузить файл</button>
+</form>
+
+
+7. Проверка работы и тестирование
+
+Я выполнил команду python manage.py runserver, чтобы запустить проект.
+
+На страницах каждого из приложений (для номеров, товаров супермаркета и удобств) я проверил:
+
+Загрузку новых изображений и файлов через формы.
+Удаление существующих файлов.
+Автоматическое удаление файлов с сервера при обновлении или удалении записи.
+
+
+Все тесты прошли успешно. 
+Библиотека django-cleanup автоматически удалила файлы с сервера при удалении записей из базы данных.
+
+
+
+Заключение
+
+В ходе выполнения практической работы №38 
+я выполнил все поставленные задачи:
+
+Подключил и настроил библиотеку
+для автоматического удаления ненужных файлов.
+
+Реализовал загрузку и удаление изображений и файлов в приложениях amenities, rooms, supermarket.
+
+Проверил работоспособность функций удаления и убедился, что файлы корректно удаляются с сервера.
+
+Мне кажется, работа выполнена в полном объеме.

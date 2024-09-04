@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Luxurious Escape Resort{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="display-3 text-uppercase mt-5">Добро пожаловать в <span class="text-primary">Luxurious Escape Resort!</span></h1>
+</div>
+
+<h2 class="mt-5 text-secondary text-center">Наши Удобства</h2>
+<div class="row">
+    {% for amenity in amenities %}
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-primary">{{ amenity.name }}</h5>
+                <p class="card-text">{{ amenity.description|truncatewords:20 }}</p>
+                <p><strong>Цена:</strong> {{ amenity.price|floatformat:2 }} руб.</p>
+                <a href="{% url 'amenity_detail' amenity.pk %}" class="btn btn-outline-primary">Подробнее</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<h2 class="mt-5 text-secondary text-center">Наши Номера</h2>
+<div class="row">
+    {% for room in rooms %}
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-primary">{{ room.name }}</h5>
+                <p class="card-text">{{ room.description|truncatewords:20 }}</p>
+                <p><strong>Цена:</strong> {{ room.price|floatformat:2 }} руб.</p>
+                <a href="{% url 'room_detail' room.pk %}" class="btn btn-outline-primary">Подробнее</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<h2 class="mt-5 text-secondary text-center">Наш Супермаркет</h2>
+<div class="row">
+    {% for item in supermarket_items %}
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-primary">{{ item.name }}</h5>
+                <p class="card-text">{{ item.description|truncatewords:20 }}</p>
+                <p><strong>Цена:</strong> {{ item.price|floatformat:2 }} руб.</p>
+                <a href="{% url 'supermarket_item_detail' item.pk %}" class="btn btn-outline-primary">Подробнее</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+
+
+
+
+
+

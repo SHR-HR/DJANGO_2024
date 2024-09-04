@@ -1,0 +1,131 @@
+Отчет о проделанной работе 
+по выполнению Домашнего задания №38: Модуль 20
+
+Курс: Web-разработка
+
+Дисциплина: Создание web-приложений с использованием фреймворка Django
+
+Домашнее задание: №38
+Модуль: 20 – Обработка выгруженных файлов
+
+1. Подключение и использование библиотеки для миниатюр
+
+Задача: Подключить и задействовать библиотеку для миниатюр, обеспечивающую вывод, сохранение и показ миниатюр изображений.
+
+
+Реализация:
+
+Библиотека easy-thumbnails: 
+В проект была интегрирована библиотека easy-thumbnails, которая используется для создания и отображения миниатюр загруженных изображений.
+
+Модификация модели Amenity: 
+В модели для поля image был изменен тип поля с ImageField на ThumbnailerImageField, что позволило автоматически генерировать и показывать миниатюры изображений.
+
+Пример изменения в модели:
+
+from easy_thumbnails.fields import ThumbnailerImageField
+class Amenity(models.Model):
+    image = ThumbnailerImageField(upload_to='amenities/', blank=True, null=True, verbose_name="Изображение")
+
+Отображение миниатюр в шаблонах: 
+
+В шаблоне amenity_detail.html была добавлена поддержка вывода миниатюр через вызов соответствующих размеров изображения.
+
+
+Пример кода в шаблоне:
+
+{% if amenity.image %}
+    <img src="{{ amenity.image.small.url }}" alt="{{ amenity.name }}" class="img-fluid mt-3">
+{% else %}
+    <p>Изображение не загружено.</p>
+{% endif %}
+
+
+
+2. Сохранение файла низкоуровневыми методами
+
+Задача: Сохранить файл, используя низкоуровневые методы.
+
+
+Реализация:
+
+Метод для низкоуровневого сохранения файлов: 
+Был реализован метод save_amenity_file, который сохраняет файлы, используя низкоуровневый подход (работа с файлами через стандартные средства Python).
+
+Пример реализации:
+
+def save_amenity_file(request, pk):
+    amenity = get_object_or_404(Amenity, pk=pk)
+    if request.method == 'POST' and 'file' in request.FILES:
+        file = request.FILES['file']
+        file_path = os.path.join(settings.MEDIA_ROOT, 'amenities/files', file.name)
+        
+        # Низкоуровневое сохранение файла
+        with open(file_path, 'wb+') as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+
+        amenity.file = file_path
+        amenity.save()
+        messages.success(request, 'Файл сохранен успешно.')
+        return redirect('amenity_detail', pk=amenity.pk)
+
+Проверка: 
+
+После реализации метода я протестировал загрузку и удаление файлов,
+ и убедился, что функционал работает корректно.
+
+
+Дополнительно реализовано
+
+Обработка сообщений: 
+
+В проект была добавлена система уведомлений (используя django.contrib.messages), 
+чтобы пользователи могли видеть сообщения об успешной загрузке или удалении изображений и файлов.
+
+
+Подтверждение удаления: 
+
+Было добавлено модальное окно для подтверждения удаления изображений и файлов, что повышает удобство работы с интерфейсом.
+
+
+Пример кода для модального окна:
+
+
+<button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteFile">
+    Удалить файл
+</button>
+
+<div class="modal fade" id="confirmDeleteFile" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить этот файл?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form method="post" action="{% url 'delete_file' amenity.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+В конечном итоге:
+
+Домашнее задание №38 выполнено в полном объеме.
+
+Все задачи 
+(подключение миниатюр и сохранение файла низкоуровневыми методами) реализованы.
+
+Дополнительно была улучшена функциональность проекта, 
+добавлена система уведомлений и модальные окна для удаления файлов и изображений.
+
+Проект успешно протестирован, и все функции работают корректно.
